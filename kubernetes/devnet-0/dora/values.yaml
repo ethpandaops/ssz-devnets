@@ -1,0 +1,56 @@
+# Ansible managed. Don't change this file manually. Template info: /vendor/collections/ansible_collections/ethpandaops/general/roles/generate_kubernetes_config/templates/dora.yaml.j2
+
+dora:
+  fullnameOverride: dora
+  image:
+    repository: ethpandaops/dora
+    tag: master
+    pullPolicy: IfNotPresent
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  ingress:
+    enabled: true
+    className: ingress-nginx-public
+    hosts:
+      - host: dora.ssz-devnet-0.ethpandaops.io
+        paths:
+          - path: /
+            pathType: Prefix
+
+  name: ssz-devnet-0
+  configPath: "https://config.ssz-devnet-0.ethpandaops.io/cl/config.yaml"
+  validatorNamesInventory: "https://config.ssz-devnet-0.ethpandaops.io/api/v1/nodes/validator-ranges"
+  proxyCount: 2
+  extraEnv:
+    - name: FRONTEND_PPROF
+      value: "true"
+    - name: FRONTEND_SHOW_SENSITIVE_PEER_INFOS
+      value: "true"
+  postgresql:
+    name: "dora-postgresql"
+    fullnameOverride: "dora-postgresql"
+
+  endpoints:
+  # Rpc
+  - url: http://teku-geth-001:5052
+    name: rpc-teku-geth-001
+    archive: true
+    priority: 1
+  - url: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.bootnode-1.ssz-devnet-0.ethpandaops.io
+    name: bootnode-1
+    priority: -1
+  executionEndpoints:
+  # Rpc
+  - url: http://geth-teku-001:8545
+    name: rpc-teku-geth-001
+    archive: true
+    priority: 1
+  - url: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
+    name: bootnode-1
+    priority: -1
+    archive: false

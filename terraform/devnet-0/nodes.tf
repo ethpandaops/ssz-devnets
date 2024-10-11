@@ -4,7 +4,7 @@ variable "bootnode" {
     name            = "bootnode"
     count           = 1
     validator_start = 0
-    validator_end   = 0
+    validator_end   = 100
   }
 }
 
@@ -12,7 +12,7 @@ variable "bootnode" {
 variable "lighthouse_geth" {
   default = {
     name            = "lighthouse-geth"
-    count           = 1
+    count           = 0
     validator_start = 0
     validator_end   = 0
   }
@@ -204,9 +204,9 @@ variable "nimbus_nethermind" {
 variable "nimbus_ethereumjs" {
   default = {
     name            = "nimbus-ethereumjs"
-    count           = 1
-    validator_start = 100
-    validator_end   = 200
+    count           = 0
+    validator_start = 0
+    validator_end   = 0
   }
 }
 
