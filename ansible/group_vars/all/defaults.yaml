@@ -3,7 +3,7 @@ ansible_python_interpreter: /usr/bin/python3
 # Template name refers to the name of the devnet without number
 # Generally refer to the first word of the repository name
 # e.g. peerdas, or pectra
-devnet_name: template
+devnet_name: ssz
 
 # IPv6 Specific configuration
 global_ipv6_enabled: true
@@ -26,6 +26,7 @@ bootstrap_default_user_authorized_keys_github:
   - savid
   - skylenet
   - pk910
+  - etan-status
 
 # role: robertdebock.fail2ban
 fail2ban_loglevel: INFO

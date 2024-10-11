@@ -3,9 +3,9 @@
 <h1 align="center">Infrastructure code for Dev/Testnets</h1>
 
 <p align="center">
-<a href="https://github.com/ethpandaops/template-testnet/actions/workflows/ansible_lint.yaml"><img src="https://github.com/ethpandaops/template-testnet/actions/workflows/ansible_lint.yaml/badge.svg"></a>
-<a href="https://github.com/ethpandaops/template-testnet/actions/workflows/terraform_lint.yaml"><img src="https://github.com/ethpandaops/template-testnet/actions/workflows/terraform_lint.yaml/badge.svg"></a>
-<a href="https://github.com/ethpandaops/template-testnet/actions/workflows/helm_lint.yaml"><img src="https://github.com/ethpandaops/template-testnet/actions/workflows/helm_lint.yaml/badge.svg"></a>
+<a href="https://github.com/ethpandaops/ssz-devnets/actions/workflows/ansible_lint.yaml"><img src="https://github.com/ethpandaops/ssz-devnets/actions/workflows/ansible_lint.yaml/badge.svg"></a>
+<a href="https://github.com/ethpandaops/ssz-devnets/actions/workflows/terraform_lint.yaml"><img src="https://github.com/ethpandaops/ssz-devnets/actions/workflows/terraform_lint.yaml/badge.svg"></a>
+<a href="https://github.com/ethpandaops/ssz-devnets/actions/workflows/helm_lint.yaml"><img src="https://github.com/ethpandaops/ssz-devnets/actions/workflows/helm_lint.yaml/badge.svg"></a>
 </p>
 
 This repository contains the infrastructure code used to setup ~all~ dev/testnets. A lot of the code uses reusable components either provided by our [ansible collection](https://github.com/ethpandaops/ansible-collection-general) or our [helm charts for kubernetes](https://github.com/ethpandaops/ethereum-helm-charts/).
@@ -14,7 +14,7 @@ This repository contains the infrastructure code used to setup ~all~ dev/testnet
 
 Status   | Network    | Links   | Ansible                                                      | Terraform | Kubernetes
 ------   | --------   | ----     |  -----                                                       | -------   | ------
- 🟢Template🔴 | [devnet-0](https://template.devnet.io/)   | [Network config](network-configs/devnet-0) / [Inventory](https://bootnode-1.devnet-0.ethpandaops.io/meta/api/v1/inventory.json) / [Validator ranges](https://bootnode-1.devnet-0.ethpandaops.io/meta/api/v1/validator-ranges.json)    | [🔗](ansible/inventories/devnet-0) | [🔗](terraform/devnet-0) | [🔗](kubernetes/devnet-0)
+ 🟢Devnet-0 | [devnet-0](https://ssz-devnet-0.ethpandaops.io/)   | [Network config](network-configs/devnet-0) / [Inventory](https://bootnode-1.ssz-devnet-0.ethpandaops.io/meta/api/v1/inventory.json) / [Validator ranges](https://bootnode-1.ssz-devnet-0.ethpandaops.io/meta/api/v1/validator-ranges.json)    | [🔗](ansible/inventories/devnet-0) | [🔗](terraform/devnet-0) | [🔗](kubernetes/devnet-0)
 
 # Development
 ## Version management for tools
@@ -124,20 +124,20 @@ from the [ansible/](ansible/) directory to clean up the network-configs and vali
 * To get the IP addresses of the nodes, run `terraform output` from the [terraform/devnet-0/](terraform/devnet-0/) directory.
 * To get the validator ranges run
 ```shell
-curl -s https://bootnode-1.devnet-0.ethpandaops.io/meta/api/v1/validator-ranges.json
+curl -s https://bootnode-1.ssz-devnet-0.ethpandaops.io/meta/api/v1/validator-ranges.json
 ```
 * To get which validator proposed a specific block run
 ```shell
-ethdo --connection=https://user:password@bn.lighthouse-nethermind-1.devnet-0.ethpandaops.io block info --blockid 100 --json | jq -r .message.proposer_index | ./whose_validator.zsh
+ethdo --connection=https://user:password@bn.lighthouse-nethermind-1.ssz-devnet-0.ethpandaops.io block info --blockid 100 --json | jq -r .message.proposer_index | ./whose_validator.zsh
 ```
 from the [ansible/](ansible/) directory.
 * Getting execution layer client enodes
 ```shell
-curl -s https://config.devnet-0.ethpandaops.io/api/v1/nodes/inventory | jq -r '.ethereum_pairs[] | .execution.enode'
+curl -s https://config.ssz-devnet-0.ethpandaops.io/api/v1/nodes/inventory | jq -r '.ethereum_pairs[] | .execution.enode'
 ```
 * Getting conseus layer client ENRs
 ```shell
-curl -s https://config.devnet-0.ethpandaops.io/api/v1/nodes/inventory | jq -r '.ethereum_pairs[] | .consensus.enr'
+curl -s https://config.ssz-devnet-0.ethpandaops.io/api/v1/nodes/inventory | jq -r '.ethereum_pairs[] | .consensus.enr'
 ```
 * Update all sops files
 ```shell

@@ -26,7 +26,7 @@ ethstats_secret: "{{ secret_ethstats }}"
 checkpoint_sync_node: bootnode-1
 ethereum_node_cl_checkpoint_sync_enabled: false
 checkpoint_sync_url: https://{{ secret_nginx_shared_basic_auth.name }}:{{ secret_nginx_shared_basic_auth.password }}@bn.{{ checkpoint_sync_node }}.{{ ethereum_network_name }}.{{ domain }}
-checkpoint_sync_url_kube: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.dencun-devnets.node_ingress.combined}>@bn.{{ checkpoint_sync_node }}.{{ ethereum_network_name }}.{{ domain }}
+checkpoint_sync_url_kube: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.{{ checkpoint_sync_node }}.{{ ethereum_network_name }}.{{ domain }}
 #  ██████╗░░█████╗░██╗░░░░░███████╗  ██╗░░░██╗░█████╗░██████╗░░██████╗
 #  ██╔══██╗██╔══██╗██║░░░░░██╔════╝  ██║░░░██║██╔══██╗██╔══██╗██╔════╝
 #  ██████╔╝██║░░██║██║░░░░░█████╗░░  ╚██╗░██╔╝███████║██████╔╝╚█████╗░
@@ -39,7 +39,7 @@ ethereum_genesis_generator_container_image: "{{ default_tooling_images.ethereum_
 ethereum_genesis_generator_version: "{{ ethereum_genesis_generator_container_image.split(':')[-1] }}"
 ethereum_genesis_network_seed: "{{ ansible_inventory_sources[0] }}"
 ethereum_genesis_chain_id: "70{{ 99999999 | random(start=10000000, seed=ethereum_genesis_network_seed) }}"
-ethereum_genesis_generator_output_dir: "../network-configs/{{ ethereum_network_name | replace('template-', '') }}"
+ethereum_genesis_generator_output_dir: "../network-configs/{{ ethereum_network_name | replace('ssz-', '') }}"
 ethereum_genesis_timestamp: "{{ lookup('ansible.builtin.pipe', '{{ ethereum_genesis_timestamp_relative_cmd[ansible_system] }}') }}"
 ethereum_genesis_timedelay: 60
 ethereum_genesis_timestamp_relative_cmd:
@@ -53,12 +53,10 @@ ethereum_genesis_generator_config_files:
   values.env: |-
     export CHAIN_ID="{{ ethereum_genesis_chain_id }}"
     export EL_AND_CL_MNEMONIC="{{ ethereum_genesis_mnemonic }}"
-    export NUMBER_OF_VALIDATORS=200
+    export NUMBER_OF_VALIDATORS=100
     export DENEB_FORK_VERSION="0x50{{ ethereum_genesis_fork_version_suffix }}"
     export ELECTRA_FORK_VERSION="0x60{{ ethereum_genesis_fork_version_suffix }}"
-    export ELECTRA_FORK_EPOCH="999999"
-    export EIP7594_FORK_VERSION="0x70{{ ethereum_genesis_fork_version_suffix }}"
-    export EIP7594_FORK_EPOCH="999999"
+    export ELECTRA_FORK_EPOCH="1"
     export GENESIS_TIMESTAMP={{ ethereum_genesis_timestamp }}
     export GENESIS_DELAY={{ ethereum_genesis_timedelay }}
 
@@ -87,6 +85,7 @@ bootstrap_default_user_authorized_keys_github_all:
   - savid
   - skylenet
   - pk910
+  - etan-status
 bootstrap_default_user_authorized_keys_github: >
   {{
     (bootstrap_default_user_authorized_keys_github_all | default([])) +

@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 variable "digitalocean_project_name" {
   type    = string
-  default = "Template"
+  default = "ssz-devnets"
 }
 
 variable "digitalocean_ssh_key_name" {
@@ -27,7 +27,7 @@ variable "digitalocean_regions" {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-//                                        LOCALS                                      
+//                                        LOCALS
 ////////////////////////////////////////////////////////////////////////////////////////
 locals {
   base_cidr_block = var.base_cidr_block
@@ -309,7 +309,7 @@ resource "local_file" "ansible_inventory" {
             ipv6            = try(server.ipv6_address, "none")
             group           = try(split(":", tolist(server.tags)[2])[1], "unknown")
             validator_start = try(split(":", tolist(server.tags)[4])[1], 0)
-            validator_end   = try(split(":", tolist(server.tags)[3])[1], 0) # if the tag is not a number it will be 0 - e.g no validator keys 
+            validator_end   = try(split(":", tolist(server.tags)[3])[1], 0) # if the tag is not a number it will be 0 - e.g no validator keys
             tags            = "${server.tags}"
             hostname        = "${split(".", key)[0]}"
             cloud           = "digitalocean"

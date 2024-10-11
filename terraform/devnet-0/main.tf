@@ -26,7 +26,7 @@ terraform {
     skip_requesting_account_id  = true
     skip_s3_checksum            = true
     region                      = "us-east-1"
-    bucket                      = "merge-testnets"
+    bucket                      = "ssz-testnets"
     key                         = "infrastructure/devnet-0/terraform.tfstate"
   }
 }
@@ -50,14 +50,14 @@ variable "cloudflare_api_token" {
 
 variable "ethereum_network" {
   type    = string
-  default = "template-devnet-0"
+  default = "ssz-devnet-0"
 }
 
 variable "base_cidr_block" {
-  default = "10.76.0.0/16"
+  default = "10.78.0.0/16"
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-//                                        LOCALS                                      
+//                                        LOCALS
 ////////////////////////////////////////////////////////////////////////////////////////
 locals {
   vm_groups = [
