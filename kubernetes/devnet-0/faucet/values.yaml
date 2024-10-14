@@ -30,7 +30,7 @@ powfaucet:
 
   faucetTitle: "ssz-devnet-0 PoW Faucet"
   faucetPrivkey: "<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.faucet_private_key}>"
-  faucetRpcUrl: "http://geth-teku-001:8545"
+  faucetRpcUrl: "https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@rpc.bootnode-1.ssz-devnet-0.ethpandaops.io"
   faucetExplorerLink: "https://explorer.ssz-devnet-0.ethpandaops.io/tx/{txid}"
   faucetTxGasLimit: 100000
 
