@@ -1,0 +1,3 @@
+# role: gen_basic_auth_nginx
+gen_basic_auth_nginx_name: ""
+gen_basic_auth_nginx_password: ""
