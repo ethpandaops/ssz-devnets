@@ -16,7 +16,7 @@ forkmon:
             pathType: Prefix
   network: ssz-devnet-0
   endpoints:
-  - addr: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
+  - addr: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
     name: bootnode-1
 
   config: |

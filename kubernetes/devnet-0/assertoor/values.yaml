@@ -42,8 +42,8 @@ assertoor:
 
   endpoints:
     - name:  bootnode-1
-      executionUrl: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
-      consensusUrl: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.bootnode-1.ssz-devnet-0.ethpandaops.io
+      executionUrl: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
+      consensusUrl: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
 
   validatorNamesInventory: https://config.ssz-devnet-0.ethpandaops.io/api/v1/nodes/validator-ranges
   globalVariables:

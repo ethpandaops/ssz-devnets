@@ -46,5 +46,5 @@ checkpointz:
     beacon:
       upstreams:
       - name: bootnode-1
-        address: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.bootnode-1.ssz-devnet-0.ethpandaops.io
+        address: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
         dataProvider: true

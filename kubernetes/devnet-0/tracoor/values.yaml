@@ -89,9 +89,9 @@ tracoor-single:
         ethereum:
           overrideNetworkName: ssz-devnet-0
           beacon:
-            nodeAddress: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.bootnode-1.ssz-devnet-0.ethpandaops.io
+            nodeAddress: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
           execution:
-            nodeAddress: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
+            nodeAddress: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
             traceDisableMemory: true
             traceDisableStack: true
             traceDisableStorage: true
