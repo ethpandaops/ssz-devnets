@@ -92,7 +92,7 @@ testnet-homepage:
       ethereum:
         faucetUrl: https://faucet.ssz-devnet-0.ethpandaops.io
         rpcUrl: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
-        beaconRpcUrl: https://beacon.ssz-devnet-0.ethpandaops.io
+        beaconRpcUrl: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
         explorerUrl: https://explorer.ssz-devnet-0.ethpandaops.io
         forkmonUrl: https://forkmon.ssz-devnet-0.ethpandaops.io
         assertoorUrl: https://assertoor.ssz-devnet-0.ethpandaops.io
