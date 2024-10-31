@@ -6,6 +6,8 @@ tx_fuzz_txs_container_command:
   - --no-al
   - --rpc=https://rpc.bootnode-1.{{ network_subdomain }}
   - --sk={{ tx_fuzz_txs_privkey }}
+  - --txcount=2
+  - --accounts=5
 
 
 tx_fuzz_container_networks: "{{ docker_networks_shared }}"
