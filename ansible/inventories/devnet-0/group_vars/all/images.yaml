@@ -11,7 +11,7 @@ default_ethereum_client_images:
   besu: hyperledger/besu:latest
   geth: ethereum/client-go:stable
   erigon: thorax/erigon:devel
-  ethereumjs: ethpandaops/ethereumjs:fusaka-f4b31d6
+  ethereumjs: ethpandaops/ethereumjs:fusaka-1383b1e
   nethermind: nethermindeth/nethermind:master
   reth: ethpandaops/reth:main
 
