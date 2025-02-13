@@ -2,6 +2,9 @@
 bootstrap_default_user_authorized_keys_github_team_el:
   - gakonst
   - onbjerg
+  - klkvr
+  - shekhirin
+  - rkrasiuk
 
 # role: ethpandaops.general.ethereum_node
 ethereum_node_el: reth
