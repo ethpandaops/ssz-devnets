@@ -2,7 +2,7 @@ default_ethereum_client_images:
 ### Consensus layer clients
   lighthouse: docker.ethquokkaops.io/dh/sigp/lighthouse:latest
   lodestar: docker.ethquokkaops.io/dh/chainsafe/lodestar:latest
-  nimbus: docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth2:pureth-c0d15c5
+  nimbus: docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth2:pureth-7c988ec
   prysm: docker.ethquokkaops.io/gcr/prysmaticlabs/prysm/beacon-chain:latest
   prysm_validator: docker.ethquokkaops.io/gcr/prysmaticlabs/prysm/validator:latest
   teku: docker.ethquokkaops.io/dh/consensys/teku:latest
@@ -11,7 +11,7 @@ default_ethereum_client_images:
   besu: docker.ethquokkaops.io/dh/hyperledger/besu:latest
   geth: docker.ethquokkaops.io/dh/ethereum/client-go:stable
   erigon: docker.ethquokkaops.io/dh/erigontech/erigon:main-latest
-  ethereumjs: docker.ethquokkaops.io/dh/ethpandaops/fusaka-1383b1e
+  ethereumjs: docker.ethquokkaops.io/dh/ethpandaops/ethereumjs:provable-web3-46b669f
   nethermind: docker.ethquokkaops.io/dh/nethermindeth/nethermind:master
   reth: docker.ethquokkaops.io/dh/ethpandaops/reth:main
 

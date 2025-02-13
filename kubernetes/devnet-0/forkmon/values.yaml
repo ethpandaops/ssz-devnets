@@ -3,7 +3,7 @@
 forkmon:
   fullnameOverride: forkmon
   image:
-    repository: skylenet/nodemonitor
+    repository: docker.ethquokkaops.io/dh/skylenet/nodemonitor
     tag: darkmode
     pullPolicy: IfNotPresent
   ingress:

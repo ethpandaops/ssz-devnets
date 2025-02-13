@@ -4,7 +4,7 @@ ethstats:
   fullnameOverride: ethstats
 
   image:
-    repository: skylenet/ethstats-server
+    repository: docker.ethquokkaops.io/dh/skylenet/ethstats-server
     tag: poa-no-geoip
     pullPolicy: IfNotPresent
   ingress:

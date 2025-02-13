@@ -4,7 +4,7 @@ powfaucet:
   fullnameOverride: powfaucet
 
   image:
-    repository: pk910/powfaucet
+    repository: docker.ethquokkaops.io/dh/pk910/powfaucet
     tag: v2-stable
     pullPolicy: IfNotPresent
 

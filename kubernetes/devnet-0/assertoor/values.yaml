@@ -4,8 +4,8 @@ assertoor:
   fullnameOverride: assertoor
 
   image:
-    repository: ethpandaops/assertoor
-    tag: latest
+    repository: docker.ethquokkaops.io/dh/ethpandaops/assertoor
+    tag: master-latest
     pullPolicy: Always
   resources:
     requests:

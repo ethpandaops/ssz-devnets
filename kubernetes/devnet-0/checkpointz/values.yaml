@@ -5,7 +5,7 @@ checkpointz:
   replicas: 1
 
   image:
-    repository: ethpandaops/checkpointz
+    repository: docker.ethquokkaops.io/dh/ethpandaops/checkpointz
     tag: latest
     pullPolicy: Always
   resources:
@@ -45,6 +45,6 @@ checkpointz:
 
     beacon:
       upstreams:
-      - name: bootnode-1
-        address: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
-        dataProvider: true
+        - name: bootnode-1
+          address: https://bn.bootnode-1.ssz-devnet-0.ethpandaops.io
+          dataProvider: true

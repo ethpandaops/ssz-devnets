@@ -3,7 +3,7 @@
 dugtrio:
   fullnameOverride: dugtrio
   image:
-    repository: ethpandaops/dugtrio
+    repository: docker.ethquokkaops.io/dh/ethpandaops/dugtrio
     tag: latest
     pullPolicy: Always
   resources:

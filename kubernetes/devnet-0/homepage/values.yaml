@@ -6,7 +6,7 @@ testnet-homepage:
   replicas: 1
 
   image:
-    repository: ethpandaops/ethereum-testnet-homepage
+    repository: docker.ethquokkaops.io/dh/ethpandaops/ethereum-testnet-homepage
     tag: latest
     pullPolicy: Always
   resources:

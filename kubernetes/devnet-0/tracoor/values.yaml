@@ -2,9 +2,9 @@
 tracoor-single:
   fullnameOverride: "tracoor"
   image:
-    repository: ethpandaops/tracoor
-    tag: latest
-    pullPolicy: Always
+    repository: docker.ethquokkaops.io/dh/ethpandaops/tracoor
+    tag: 0.0.26-debian
+    pullPolicy: IfNotPresent
   resources:
     requests:
       cpu: 1000m
@@ -76,11 +76,11 @@ tracoor-single:
           path: network-configs/devnet-0/metadata
         tools:
           ncli:
-            repository: status-im/nimbus-eth2
+            repository: docker.ethquokkaops.io/dh/status-im/nimbus-eth2
             branch: unstable
           lcli:
-            repository: sigp/lighthouse
-            branch: electra-devnet-1
+            repository: docker.ethquokkaops.io/dh/ethpandaops/lighthouse
+            branch: unstable-a94b12blo
           zcli:
             fork: electra
 
