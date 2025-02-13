@@ -40,7 +40,7 @@ locals {
         id         = "${vm_group.name}-${i + 1}"
         vms = {
           "${i + 1}" = {
-            tags   = "group_name:${vm_group.name},val_start:${vm_group.validator_start + (i * (vm_group.validator_end - vm_group.validator_start) / vm_group.count)},val_end:${min(vm_group.validator_start + ((i + 1) * (vm_group.validator_end - vm_group.validator_start) / vm_group.count), vm_group.validator_end)}"
+            tags   = "group_name:${vm_group.name},val_start:${vm_group.validator_start + ceil(i * (vm_group.validator_end - vm_group.validator_start) / vm_group.count)},val_end:${min(vm_group.validator_start + ceil((i + 1) * (vm_group.validator_end - vm_group.validator_start) / vm_group.count), vm_group.validator_end)}"
             region = element(var.digitalocean_regions, i % length(var.digitalocean_regions))
             size   = try(vm_group.size, local.digitalocean_default_size)
             ipv6   = try(vm_group.ipv6, true)
