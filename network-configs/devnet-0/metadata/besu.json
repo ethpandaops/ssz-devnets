@@ -1,6 +1,6 @@
 {
   "config": {
-    "chainId": 7061395750,
+    "chainId": 7074513953,
     "homesteadBlock": 0,
     "eip150Block": 0,
     "eip155Block": 0,
@@ -33,8 +33,8 @@
         "baseFeeUpdateFraction": 5007716
       }
     },
-    "pragueTime": 1739462588,
-    "osakaTime": 1777861820,
+    "pragueTime": 1750113684,
+    "osakaTime": 1788512916,
     "ethash": {}
   },
   "alloc": {
@@ -948,5 +948,5 @@
   "nonce": "0x1234",
   "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-  "timestamp": "1739462144"
+  "timestamp": "1750113240"
 }

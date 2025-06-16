@@ -24,7 +24,7 @@ bootstrap_default_user_authorized_keys_github_team_el:
   - jochem-brouwer
 
 # role: ethpandaops.general.ethereum_node
-ethereum_node_el: ethereumjs
+ethereum_node_el: geth
 ethereum_node_cl: nimbus
 
 # role: validator_keys
@@ -64,26 +64,30 @@ nimbus_container_validator_volumes:
   - "{{ nimbus_validator_datadir }}:/validator-data"
 nimbus_container_pull: true
 
-
-# role: ethpandaops.general.ethereumjs
-ethereumjs_container_name: execution
-ethereumjs_container_image: "{{ default_ethereum_client_images.ethereumjs }}"
-ethereumjs_container_env:
+# role: ethpandaops.general.geth
+geth_container_name: execution
+geth_container_image: "{{ default_ethereum_client_images.geth }}"
+geth_container_env:
   VIRTUAL_HOST: "{{ ethereum_node_rcp_hostname }}"
   VIRTUAL_PORT: "{{ ethereum_node_el_ports_http_rpc | string }}"
   LETSENCRYPT_HOST: "{{ ethereum_node_rcp_hostname }}"
-ethereumjs_container_volumes:
-  - "{{ ethereumjs_datadir }}:/data"
-  - "{{ ethereumjs_auth_jwt_path }}:/execution-auth.jwt:ro"
-  - "{{ eth_testnet_config_dir }}:/network-config:ro"
+geth_container_command_extra_args:
+  - --http.api=eth,net,web3,debug,admin
+  - --http.vhosts=*
+  - --networkid={{ ethereum_network_id }}
+  - --syncmode=full
+  - --gcmode=archive
+  - --state.scheme=hash
+  - --ethstats={{ inventory_hostname }}:{{ ethstats_secret }}@{{ ethstats_url }}
+geth_init_custom_network: true
+geth_init_custom_network_genesis_file: "{{ eth_testnet_config_dir }}/genesis.json"
+geth_container_pull: true
 
-ethereum_node_fact_discovery_el_enode_cmd:
-  ethereumjs: cat /data/ethereumjs/genesis/rlpx
-
-ethereumjs_container_command_extra_args:
-  - --gethGenesis=/network-config/genesis.json
-  - --maxPeers=75
-  - --isSingleNode=true
+geth_init_custom_network_container_command:
+  - --datadir=/data
+  - init
+  - --state.scheme=hash
+  - /genesis.json
 
 # role: ethpandaops.general.prometheus
 prometheus_remote_push_url: https://victoriametrics.ethdevops.io/insert/0/prometheus/api/v1/write

@@ -103,7 +103,7 @@ testnet-homepage:
         blobscanethpandaUrl: https://blobscan.ssz-devnet-0.ethpandaops.io
         ethstatsUrl: https://ethstats.ssz-devnet-0.ethpandaops.io
         chainName: "ssz-devnet-0"
-        chainId: "7061395750"
+        chainId: "7074513953"
         github: https://github.com/ethpandaops/ssz-devnets/tree/master/network-configs/devnet-0/metadata
       metamask:
         enabled: true

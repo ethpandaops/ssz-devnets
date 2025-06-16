@@ -39,8 +39,6 @@ dora:
       value: "true"
     - name: FRONTEND_SHOW_SUBMIT_EL_REQUESTS
       value: "true"
-    - name: KILLSWITCH_DISABLE_SSZ_REQUESTS
-      value: "true"
   postgresql:
     name: "dora-postgresql"
     fullnameOverride: "dora-postgresql"

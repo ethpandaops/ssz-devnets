@@ -9,7 +9,7 @@
     "accountStartNonce": "0x0",
     "maximumExtraDataSize": "0xffff",
     "minGasLimit": "0x1388",
-    "networkID": "0x1a4e45926",
+    "networkID": "0x1a5ac8421",
     "MergeForkIdTransition": "0x0",
     "maxCodeSize": "0x6000",
     "maxCodeSizeTransition": "0x0",
@@ -69,14 +69,14 @@
         "baseFeeUpdateFraction": "0x4c6964"
       }
     },
-    "eip2537TransitionTimestamp": "0x67ae17bc",
-    "eip2935TransitionTimestamp": "0x67ae17bc",
-    "eip6110TransitionTimestamp": "0x67ae17bc",
-    "eip7002TransitionTimestamp": "0x67ae17bc",
-    "eip7251TransitionTimestamp": "0x67ae17bc",
-    "eip7702TransitionTimestamp": "0x67ae17bc",
-    "eip7623TransitionTimestamp": "0x67ae17bc",
-    "eip7692TransitionTimestamp": "0x69f804bc"
+    "eip2537TransitionTimestamp": "0x68509d94",
+    "eip2935TransitionTimestamp": "0x68509d94",
+    "eip6110TransitionTimestamp": "0x68509d94",
+    "eip7002TransitionTimestamp": "0x68509d94",
+    "eip7251TransitionTimestamp": "0x68509d94",
+    "eip7702TransitionTimestamp": "0x68509d94",
+    "eip7623TransitionTimestamp": "0x68509d94",
+    "eip7692TransitionTimestamp": "0x6a9a8a94"
   },
   "genesis": {
     "seal": {
@@ -87,7 +87,7 @@
     },
     "difficulty": "0x0",
     "author": "0x0000000000000000000000000000000000000000",
-    "timestamp": "0x67ae1600",
+    "timestamp": "0x68509bd8",
     "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
     "extraData": "",
     "gasLimit": "0x17d7840"

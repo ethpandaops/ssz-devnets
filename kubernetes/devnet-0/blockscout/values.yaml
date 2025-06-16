@@ -4,7 +4,7 @@ blockscout-stack:
   fullnameOverride: blockscout-stack
   config:
     network:
-      id: 7061395750
+      id: 7074513953
       name: ssz-devnet-0
       shortname: ssz-devnet-0
       currency:
@@ -33,7 +33,7 @@ blockscout-stack:
     env:
       ETHEREUM_JSONRPC_VARIANT: "geth"
       ETHEREUM_JSONRPC_HTTP_URL: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
-      ETHEREUM_JSONRPC_WS_URL: ws://geth-teku-001:8546
+      ETHEREUM_JSONRPC_WS_URL: ws://geth-prysm-001:8546
       ETHEREUM_JSONRPC_TRACE_URL: https://rpc.bootnode-1.ssz-devnet-0.ethpandaops.io
       COIN: ETH
       DATABASE_URL: postgres://postgres:postgres@blockscout-postgresql:5432/blockscout?ssl=false
@@ -103,7 +103,7 @@ blockscout-stack:
       NEXT_PUBLIC_API_PROTOCOL: https
       NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: wss
       NEXT_PUBLIC_NETWORK_NAME: ssz-devnet-0
-      NEXT_PUBLIC_NETWORK_ID: 7061395750
+      NEXT_PUBLIC_NETWORK_ID: 7074513953
       NEXT_PUBLIC_NETWORK_RPC_URL: https://rpc.ssz-devnet-0.ethpandaops.io
       NEXT_PUBLIC_APP_HOST: explorer.ssz-devnet-0.ethpandaops.io
       NEXT_PUBLIC_APP_PROTOCOL: https

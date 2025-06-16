@@ -72,7 +72,7 @@ erpc:
           - matchDomain: "*"
             serveProject: "main"
             serveArchitecture: "evm"
-            serveChain: "7061395750"
+            serveChain: "7074513953"
 
     metrics:
       enabled: true
@@ -85,7 +85,7 @@ erpc:
         cors:
           allowedOrigins:
             - "https://*.ethpandaops.io"
-          allowedMethods:
+          allowedMethods: 
             - "GET"
             - "POST"
             - "OPTIONS"
