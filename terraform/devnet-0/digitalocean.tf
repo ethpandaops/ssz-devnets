@@ -41,7 +41,7 @@ locals {
         vms = {
           "${i + 1}" = {
             tags   = "group_name:${vm_group.name},val_start:${vm_group.validator_start + ceil(i * (vm_group.validator_end - vm_group.validator_start) / vm_group.count)},val_end:${min(vm_group.validator_start + ceil((i + 1) * (vm_group.validator_end - vm_group.validator_start) / vm_group.count), vm_group.validator_end)}"
-            region = element(var.digitalocean_regions, i % length(var.digitalocean_regions))
+            region = try(vm_group.region, element(var.digitalocean_regions, i % length(var.digitalocean_regions)))
             size   = try(vm_group.size, local.digitalocean_default_size)
             ipv6   = try(vm_group.ipv6, true)
           }
@@ -180,6 +180,16 @@ resource "digitalocean_firewall" "main" {
   inbound_rule {
     protocol         = "udp"
     port_range       = "30303"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "42069"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+  inbound_rule {
+    protocol         = "udp"
+    port_range       = "42069"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
