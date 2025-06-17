@@ -9,7 +9,7 @@ default_ethereum_client_images:
   grandine: docker.ethquokkaops.io/dh/ethpandaops/grandine:develop
 ### Execution layer clients
   besu: docker.ethquokkaops.io/dh/hyperledger/besu:latest
-  geth: docker.ethquokkaops.io/dh/ethereum/client-go:stable
+  geth: docker.ethquokkaops.io/dh/ethpandaops/geth:pureth-c90df7b  # ethereum/client-go:stable
   erigon: docker.ethquokkaops.io/dh/erigontech/erigon:main-latest
   ethereumjs: docker.ethquokkaops.io/dh/ethpandaops/ethereumjs:provable-web3-46b669f
   nethermind: docker.ethquokkaops.io/dh/nethermindeth/nethermind:master
@@ -38,7 +38,7 @@ default_tooling_images:
   blobscan_indexer: docker.ethquokkaops.io/dh/blossomlabs/blobscan-indexer:latest
   dora: docker.ethquokkaops.io/dh/ethpandaops/dora:master-latest
   dugtrio: docker.ethquokkaops.io/dh/ethpandaops/dugtrio:latest
-  ethereum_genesis_generator: docker.ethquokkaops.io/dh/ethpandaops/ethereum-genesis-generator:3.7.0
+  ethereum_genesis_generator: docker.ethquokkaops.io/dh/ethpandaops/ethereum-genesis-generator:pureth-cde7042  # :3.7.0
   tracoor: docker.ethquokkaops.io/dh/ethpandaops/tracoor:0.0.26-debian
   ncli: docker.ethquokkaops.io/dh/status-im/nimbus-eth2:unstable
   lcli: docker.ethquokkaops.io/dh/ethpandaops/lighthouse:unstable-a94b12blo
