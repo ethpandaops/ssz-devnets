@@ -60,7 +60,7 @@
         "baseFeeUpdateFraction": "0x32f0ed"
       },
       {
-        "timestamp": "0x685180cd",
+        "timestamp": "0x68519cc0",
         "target": 6,
         "max": 9,
         "maxBlobsPerTx": 0,
@@ -68,22 +68,22 @@
       }
     ],
     "depositContractAddress": "0x00000000219ab540356cBB839Cbe05303d7705Fa",
-    "eip2537TransitionTimestamp": "0x685180cd",
-    "eip2935TransitionTimestamp": "0x685180cd",
-    "eip6110TransitionTimestamp": "0x685180cd",
-    "eip7002TransitionTimestamp": "0x685180cd",
-    "eip7251TransitionTimestamp": "0x685180cd",
-    "eip7623TransitionTimestamp": "0x685180cd",
-    "eip7702TransitionTimestamp": "0x685180cd",
-    "eip7594TransitionTimestamp": "0x6851824d",
-    "eip7823TransitionTimestamp": "0x6851824d",
-    "eip7825TransitionTimestamp": "0x6851824d",
-    "eip7883TransitionTimestamp": "0x6851824d",
-    "eip7918TransitionTimestamp": "0x6851824d",
-    "eip7934TransitionTimestamp": "0x6851824d",
-    "eip7939TransitionTimestamp": "0x6851824d",
-    "eip7951TransitionTimestamp": "0x6851824d",
-    "eip7745TransitionTimestamp": "0x685183cd"
+    "eip2537TransitionTimestamp": "0x68519cc0",
+    "eip2935TransitionTimestamp": "0x68519cc0",
+    "eip6110TransitionTimestamp": "0x68519cc0",
+    "eip7002TransitionTimestamp": "0x68519cc0",
+    "eip7251TransitionTimestamp": "0x68519cc0",
+    "eip7623TransitionTimestamp": "0x68519cc0",
+    "eip7702TransitionTimestamp": "0x68519cc0",
+    "eip7594TransitionTimestamp": "0x68519e40",
+    "eip7823TransitionTimestamp": "0x68519e40",
+    "eip7825TransitionTimestamp": "0x68519e40",
+    "eip7883TransitionTimestamp": "0x68519e40",
+    "eip7918TransitionTimestamp": "0x68519e40",
+    "eip7934TransitionTimestamp": "0x68519e40",
+    "eip7939TransitionTimestamp": "0x68519e40",
+    "eip7951TransitionTimestamp": "0x68519e40",
+    "eip7745TransitionTimestamp": "0x68519fc0"
   },
   "genesis": {
     "seal": {
@@ -94,7 +94,7 @@
     },
     "difficulty": "0x0",
     "author": "0x0000000000000000000000000000000000000000",
-    "timestamp": "0x68517f11",
+    "timestamp": "0x68519b22",
     "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
     "extraData": "",
     "gasLimit": "0x2255100"
