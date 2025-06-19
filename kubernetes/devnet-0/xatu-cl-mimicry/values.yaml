@@ -3,8 +3,8 @@ xatu-cl-mimicry:
   fullnameOverride: xatu-cl-mimicry
   image:
     repository: docker.ethquokkaops.io/dh/ethpandaops/xatu
-    tag: 0.0.5-fulu
-    pullPolicy: IfNotPresent
+    tag: latest
+    pullPolicy: Always
   resources:
     limits:
       cpu: 1000m

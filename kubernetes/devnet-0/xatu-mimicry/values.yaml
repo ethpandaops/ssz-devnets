@@ -3,8 +3,8 @@ xatu-mimicry:
   fullnameOverride: xatu-mimicry
   image:
     repository: docker.ethquokkaops.io/dh/ethpandaops/xatu
-    tag: 0.0.5-fulu
-    pullPolicy: IfNotPresent
+    tag: latest
+    pullPolicy: Always
   resources:
     limits:
       cpu: 1000m
@@ -26,7 +26,7 @@ xatu-mimicry:
       config:
         retryInterval: 60s
         nodeRecords:
-          - enode://cc1393785d1c8f3731677c15463e33035932d0869e43a8b9cf253fa94e35262144fd86afee0397840d4913af87fb40e0a10049e4a7599da14094d352b53b03e1@167.99.210.119:30303?discport=30303
+          - enode://1736453b2df580640892bbf0c1a917888bed52d45983348a29336739c9be62d28f5b372de7ae795bb27b9baa15915f82c6b322c429021389784688f32dee5836@167.99.210.119:30303?discport=30303
     outputs:
     - name: grpc
       type: xatu
