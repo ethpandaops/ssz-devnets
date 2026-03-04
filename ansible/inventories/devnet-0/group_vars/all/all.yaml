@@ -1,13 +1,15 @@
-#  ░██████╗░██╗░░░░░░█████╗░██████╗░░█████╗░██╗░░░░░  ██╗░░░██╗░█████╗░██████╗░░██████╗
-#  ██╔════╝░██║░░░░░██╔══██╗██╔══██╗██╔══██╗██║░░░░░  ██║░░░██║██╔══██╗██╔══██╗██╔════╝
-#  ██║░░██╗░██║░░░░░██║░░██║██████╦╝███████║██║░░░░░  ╚██╗░██╔╝███████║██████╔╝╚█████╗░
-#  ██║░░╚██╗██║░░░░░██║░░██║██╔══██╗██╔══██║██║░░░░░  ░╚████╔╝░██╔══██║██╔══██╗░╚═══██╗
-#  ╚██████╔╝███████╗╚█████╔╝██████╦╝██║░░██║███████╗  ░░╚██╔╝░░██║░░██║██║░░██║██████╔╝
-#  ░╚═════╝░╚══════╝░╚════╝░╚═════╝░╚═╝░░╚═╝╚══════╝  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░
+#  ░██████╗░██╗░░░░░░█████╗░██████╗░░█████╗░██╗░░░░░  ██╗░░░██╗░█████╗░██████╗░░██████╗
+#  ██╔════╝░██║░░░░░██╔══██╗██╔══██╗██╔══██╗██║░░░░░  ██║░░░██║██╔══██╗██╔══██╗██╔════╝
+#  ██║░░██╗░██║░░░░░██║░░██║██████╦╝███████║██║░░░░░  ╚██╗░██╔╝███████║██████╔╝╚█████╗░
+#  ██║░░╚██╗██║░░░░░██║░░██║██╔══██╗██╔══██║██║░░░░░  ░╚████╔╝░██╔══██║██╔══██╗░╚═══██╗
+#  ╚██████╔╝███████╗╚█████╔╝██████╦╝██║░░██║███████╗  ░░╚██╔╝░░██║░░██║██║░░██║██████╔╝
+#  ░╚═════╝░╚══════╝░╚════╝░╚═════╝░╚═╝░░╚═╝╚══════╝  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░
 
 domain: ethpandaops.io
 network_subdomain: "{{ ethereum_network_name }}.{{ domain }}"
-server_fqdn: "{{ inventory_hostname }}.{{ network_subdomain }}"
+network_server_subdomain: "srv.{{ network_subdomain }}"
+server_fqdn: "{{ inventory_hostname }}.{{ network_server_subdomain }}"
+network_iteration: "{{ ethereum_network_name.split('-')[1:] | join('-') }}"
 
 ethereum_network_id: >-
   {{ (lookup('file', eth_testnet_config_local_dir_src + '/genesis.json') | from_json).config.chainId }}
@@ -16,30 +18,36 @@ ethereum_network_deposit_contract: >-
 ethereum_network_deposit_contract_block: >-
   {{ lookup('file', eth_testnet_config_local_dir_src + '/deposit_contract_block.txt') }}
 
-ethereum_node_rcp_hostname: "rpc.{{ server_fqdn }}"
-ethereum_node_beacon_hostname: "bn.{{ server_fqdn }}"
+ethereum_node_rpc_prefix: "rpc-" # prefix for rpc URLs
+ethereum_node_beacon_prefix: "bn-" # prefix for beacon URLs
+ethereum_node_rcp_hostname: "{{ ethereum_node_rpc_prefix }}{{ server_fqdn }}"
+ethereum_node_beacon_hostname: "{{ ethereum_node_beacon_prefix }}{{ server_fqdn }}"
+
+primary_bootnode: bootnode-1
 
 ethstats_url: "ethstats.{{ ethereum_network_name }}.{{ domain }}"
 ethstats_secret: "{{ secret_ethstats }}"
 
 ### Checkpoint sync specific for Ansible & Kubernetes
-checkpoint_sync_node: bootnode-1
+checkpoint_sync_node: "{{ primary_bootnode }}"
 ethereum_node_cl_checkpoint_sync_enabled: false
-checkpoint_sync_url: https://{{ secret_nginx_shared_basic_auth.name }}:{{ secret_nginx_shared_basic_auth.password }}@bn.{{ checkpoint_sync_node }}.{{ ethereum_network_name }}.{{ domain }}
-checkpoint_sync_url_kube: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@bn.{{ checkpoint_sync_node }}.{{ ethereum_network_name }}.{{ domain }}
-#  ██████╗░░█████╗░██╗░░░░░███████╗  ██╗░░░██╗░█████╗░██████╗░░██████╗
-#  ██╔══██╗██╔══██╗██║░░░░░██╔════╝  ██║░░░██║██╔══██╗██╔══██╗██╔════╝
-#  ██████╔╝██║░░██║██║░░░░░█████╗░░  ╚██╗░██╔╝███████║██████╔╝╚█████╗░
-#  ██╔══██╗██║░░██║██║░░░░░██╔══╝░░  ░╚████╔╝░██╔══██║██╔══██╗░╚═══██╗
-#  ██║░░██║╚█████╔╝███████╗███████╗  ░░╚██╔╝░░██║░░██║██║░░██║██████╔╝
-#  ╚═╝░░╚═╝░╚════╝░╚══════╝╚══════╝  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░
+checkpoint_sync_url: https://checkpoint-sync.{{ ethereum_network_name }}.{{ domain }}
+#checkpoint_sync_url: https://{{ secret_nginx_shared_basic_auth.name }}:{{ secret_nginx_shared_basic_auth.password }}@{{ ethereum_node_beacon_prefix }}{{ checkpoint_sync_node }}.{{ network_server_subdomain }}
+checkpoint_sync_url_kube: https://<path:/secrets/services/services.enc.yaml#ethereum | jsonPath {.testnets.ssz-devnets.node_ingress.combined}>@{{ ethereum_node_beacon_prefix }}{{ checkpoint_sync_node }}.{{ network_server_subdomain }}
+#  ██████╗░░█████╗░██╗░░░░░███████╗  ██╗░░░██╗░█████╗░██████╗░░██████╗
+#  ██╔══██╗██╔══██╗██║░░░░░██╔════╝  ██║░░░██║██╔══██╗██╔══██╗██╔════╝
+#  ██████╔╝██║░░██║██║░░░░░█████╗░░  ╚██╗░██╔╝███████║██████╔╝╚█████╗░
+#  ██╔══██╗██║░░██║██║░░░░░██╔══╝░░  ░╚████╔╝░██╔══██║██╔══██╗░╚═══██╗
+#  ██║░░██║╚█████╔╝███████╗███████╗  ░░╚██╔╝░░██║░░██║██║░░██║██████╔╝
+#  ╚═╝░░╚═╝░╚════╝░╚══════╝╚══════╝  ░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░
 
 # role: ethpandaops.general.ethereum_genesis
 ethereum_genesis_generator_container_image: "{{ default_tooling_images.ethereum_genesis_generator }}"
 ethereum_genesis_generator_version: "{{ ethereum_genesis_generator_container_image.split(':')[-1] }}"
 ethereum_genesis_network_seed: "template-devnet-0"
 ethereum_genesis_chain_id: "70{{ 99999999 | random(start=10000000, seed=ethereum_genesis_network_seed) }}"
-ethereum_genesis_generator_output_dir: "../network-configs/{{ ethereum_network_name | replace('ssz-', '') }}"
+ethereum_genesis_fork_version_suffix: "{{ 999999 | random(start=100000, seed=ethereum_genesis_network_seed) }}"
+ethereum_genesis_generator_output_dir: "../network-configs/{{ network_iteration }}"
 ethereum_genesis_timestamp: "{{ lookup('ansible.builtin.pipe', '{{ ethereum_genesis_timestamp_relative_cmd[ansible_system] }}') }}"
 ethereum_genesis_timedelay: 30
 ethereum_genesis_timestamp_relative_cmd:
@@ -121,11 +129,34 @@ ethereum_node_el_ports_http_rpc: 8545
 ethereum_node_el_ports_ws_rpc: 8546
 ethereum_node_el_ports_engine: 8551
 ethereum_node_el_ports_metrics: 6060
+ethereum_node_ipv6_enabled: true
 ethereum_node_skip_cleanup: true
+ethereum_node_docker_watchtower_enabled: true
+ethereum_node_docker_watchtower_containers_list:
+  - execution
+  - beacon
+  - validator
+  - xatu-sentry
+  - external-block-builder
+docker_watchtower_container_additional_args:
+  - --interval=900
+  - --stop-timeout=300s
+  - --include-restarting
 
 ethereum_node_json_rpc_snooper_engine_enabled: true
 ethereum_node_json_rpc_snooper_engine_port: 8561
 ethereum_node_json_rpc_snooper_engine_name: "snooper-engine"
+ethereum_node_json_rpc_snooper_engine_public_port: 8961
+ethereum_node_json_rpc_snooper_engine_container_env:
+  SNOOPER_API_PORT: "{{ ethereum_node_json_rpc_snooper_engine_public_port | quote }}"
+  SNOOPER_API_AUTH: "{{ secret_nginx_shared_basic_auth.name }}:{{ secret_nginx_shared_basic_auth.password }}"
+
+# role: ethpandaops.general.generate_kubernetes_config
+gen_kubernetes_config_dora_execution_snooper_port: 8961
+gen_kubernetes_config_dora_frontend_rainbowkit_id: "15fe4ab4d5c0bcb6f0dc7c398301ff0e"
+gen_kubernetes_config_dora_execution_endpoints_url: "https://raw.githubusercontent.com/ethpandaops/ssz-devnets/refs/heads/master/kubernetes/{{ network_iteration }}/dora/endpoints-el.yaml"
+gen_kubernetes_config_dora_consensus_endpoints_url: "https://raw.githubusercontent.com/ethpandaops/ssz-devnets/refs/heads/master/kubernetes/{{ network_iteration }}/dora/endpoints-cl.yaml"
+gen_kubernetes_config_dora_api_secret: "{{ secret_dora_api_key }}"
 
 # role: ethpandaops.general.xatu_sentry
 xatu_sentry_container_image: "{{ default_tooling_images.xatu_sentry }}"
@@ -137,6 +168,52 @@ xatu_sentry_config_network_name_override: "{{ ethereum_network_name }}"
 
 # role: ethpandaops.general.ethereum_metrics_exporter
 ethereum_metrics_exporter_container_image: "{{ default_tooling_images.ethereum_metrics_exporter }}"
+ethereum_metrics_exporter_container_user: root
+ethereum_metrics_exporter_container_volumes:
+  - "{{ ethereum_metrics_exporter_dir_config }}:/config:ro"
+  - /var/run/docker.sock:/var/run/docker.sock:ro
+  - /data:/data:ro
+ethereum_metrics_exporter_config: |
+  consensus:
+    enabled: true
+    url: "{{ ethereum_metrics_exporter_cl_endpoint }}"
+    name: "consensus-client"
+  execution:
+    enabled: true
+    url: "{{ ethereum_metrics_exporter_el_endpoint }}"
+    name: "execution-client"
+    modules:
+      - "eth"
+      - "net"
+      - "web3"
+      - "txpool"
+  docker:
+    enabled: true
+    endpoint: "unix:///var/run/docker.sock"
+    interval: "10s"
+    containers:
+      - name: "execution"
+        type: "execution"
+        filesystem:
+          enabled: true
+        volumes:
+          - name: "*"
+            monitor: true
+          - path: "/execution-auth.jwt"
+            monitor: false
+          - path: "/network-config"
+            monitor: false
+      - name: "beacon"
+        type: "consensus"
+        filesystem:
+          enabled: true
+        volumes:
+          - name: "*"
+            monitor: true
+          - path: "/execution-auth.jwt"
+            monitor: false
+          - path: "/network-config"
+            monitor: false
 
 # role: eth_testnet_config
 eth_testnet_config_dir: /data/ethereum-network-config/metadata
@@ -156,6 +233,7 @@ docker_nginx_proxy_default_email: "certs@{{ domain }}"
 docker_nginx_proxy_docker_gen_container_name: nginx-proxy-gen
 docker_nginx_proxy_docker_gen_container_env:
   RESOLVERS: "1.1.1.1"
+docker_nginx_proxy_acme_companion_enabled: false
 docker_nginx_proxy_acme_companion_container_name: nginx-proxy-acme
 docker_nginx_proxy_acme_companion_container_env:
   DEFAULT_EMAIL: "{{ docker_nginx_proxy_default_email }}"
@@ -168,7 +246,7 @@ docker_nginx_proxy_container_networks: "{{ docker_networks_shared }}"
 docker_nginx_proxy_docker_gen_container_networks: "{{ docker_networks_shared }}"
 docker_nginx_proxy_acme_companion_container_networks: "{{ docker_networks_shared }}"
 docker_nginx_proxy_acme_monitor_container_networks: "{{ docker_networks_shared }}"
-docker_nginx_proxy_acme_monitor_enabled: true
+docker_nginx_proxy_acme_monitor_enabled: false
 docker_nginx_proxy_datadir: /opt/nginx-proxy
 docker_nginx_proxy_container_volumes:
   - "{{ docker_nginx_proxy_datadir }}/conf:/etc/nginx/conf.d"
@@ -176,6 +254,13 @@ docker_nginx_proxy_container_volumes:
   - "{{ docker_nginx_proxy_datadir }}/certs:/etc/nginx/certs:ro"
   - html:/usr/share/nginx/html
   - "{{ docker_nginx_proxy_datadir }}/htpasswd:/etc/nginx/htpasswd:ro"
+docker_nginx_proxy_cert_loader_container_image: "{{ default_tooling_images.nginx_proxy_cert_loader }}"
+docker_nginx_proxy_cert_linker_container_image: "{{ default_tooling_images.nginx_proxy_cert_linker }}"
+docker_nginx_proxy_cert_loader_container_networks: "{{ docker_networks_shared }}"
+docker_nginx_proxy_cert_linker_container_networks: "{{ docker_networks_shared }}"
+docker_nginx_proxy_wildcard_cert: "{{ network_server_subdomain }}"
+docker_nginx_proxy_wildcard_cert_url: "http://cert.{{ network_server_subdomain }}/{{ network_server_subdomain }}-latest.tar.enc"
+docker_nginx_proxy_wildcard_cert_psk: "{{ secret_cert_encryption_psk }}"
 
 
 # role: ethpandaops.general.vector

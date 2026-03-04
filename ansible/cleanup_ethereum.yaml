@@ -23,6 +23,7 @@
             name: "{{ item }}"
             state: absent
             timeout: 5
+            force_kill: true
           loop:
             # Execution layer clients
             - "besu"
@@ -36,6 +37,7 @@
             - "execution"
             - "execution-init"
             - "nimbusel"
+            - "ethrex"
             # Consensus layer clients
             - "lighthouse-validator"
             - "lighthouse"
@@ -58,6 +60,11 @@
             - "mev-boost"
             - "external-block-builder"
             - "xatu-sentry"
+            - "mev-relay-api"
+            - "mev-relay-housekeeper"
+            - "mev-relay-website"
+            - "mev-relay-redis"
+            - "mev-relay-database"
         - name: Remove data dirs
           file:
             state: absent
@@ -71,6 +78,7 @@
             - /data/nethermind
             - /data/reth
             - /data/nimbusel
+            - /data/ethrex
             # Consensus layer data
             - /data/lighthouse
             - /data/lighthouse-validator
@@ -89,3 +97,5 @@
             - /data/execution-auth.secret
             - /data/cl-bootnode
             - /data/xatu-sentry
+            # MEV
+            - /data/mev_relay
