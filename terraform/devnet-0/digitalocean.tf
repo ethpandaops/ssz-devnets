@@ -11,6 +11,16 @@ variable "digitalocean_ssh_key_name" {
   default = "shared-devops-eth2"
 }
 
+variable "digitalocean_supernode_size" {
+  type    = string
+  default = "s-8vcpu-32gb-640gb-intel"
+}
+
+variable "digitalocean_fullnode_size" {
+  type    = string
+  default = "s-8vcpu-16gb"
+}
+
 variable "digitalocean_regions" {
   default = [
     "ams3",
@@ -21,29 +31,41 @@ variable "digitalocean_regions" {
 //                                        LOCALS
 ////////////////////////////////////////////////////////////////////////////////////////
 locals {
-  base_cidr_block = var.base_cidr_block
   digitalocean_vpcs = {
     for region in var.digitalocean_regions : region => {
       name     = "${var.ethereum_network}-${region}"
       region   = region
-      ip_range = cidrsubnet(local.base_cidr_block, 8, index(var.digitalocean_regions, region))
+      ip_range = cidrsubnet(var.base_cidr_block, 8, index(var.digitalocean_regions, region))
     }
   }
 }
 
 locals {
   digitalocean_vm_groups = flatten([
-    for vm_group in local.vm_groups :
-    [
-      for i in range(0, vm_group.count) : {
-        group_name = "${vm_group.name}"
-        id         = "${vm_group.name}-${i + 1}"
+    for node in local.digitalocean_nodes : [
+      for i in range(0, node.count) : {
+        group_name = node.name
+        id         = "${node.name}-${node.start_index + i + 1}"
         vms = {
           "${i + 1}" = {
-            tags   = "group_name:${vm_group.name},val_start:${vm_group.validator_start + ceil(i * (vm_group.validator_end - vm_group.validator_start) / vm_group.count)},val_end:${min(vm_group.validator_start + ceil((i + 1) * (vm_group.validator_end - vm_group.validator_start) / vm_group.count), vm_group.validator_end)}"
-            region = try(vm_group.region, element(var.digitalocean_regions, i % length(var.digitalocean_regions)))
-            size   = try(vm_group.size, local.digitalocean_default_size)
-            ipv6   = try(vm_group.ipv6, true)
+            # Validator range for this instance
+            val_start = node.validator_start + (i * (node.validator_end - node.validator_start) / node.count)
+            val_end = min(
+              node.validator_start + ((i + 1) * (node.validator_end - node.validator_start) / node.count),
+              node.validator_end
+            )
+            validator_count = node.count > 0 ? (node.validator_end - node.validator_start) / node.count : 0
+
+            # Supernode: explicit > bootnode/mev > validator_count >= 128
+            supernode = (
+              node.supernode != null ? node.supernode :
+              can(regex("(bootnode|mev)", node.name)) ? true :
+              (node.count > 0 ? (node.validator_end - node.validator_start) / node.count >= 128 : false)
+            )
+
+            region = node.region != null ? node.region : var.digitalocean_regions[i % length(var.digitalocean_regions)]
+            ipv6   = node.ipv6
+            arch   = "amd64"
           }
         }
       }
@@ -53,37 +75,41 @@ locals {
 
 locals {
   digitalocean_default_region = "ams3"
-  digitalocean_default_size   = "c-2"
-  digitalocean_default_image  = "debian-12-x64"
+  digitalocean_default_size   = var.digitalocean_fullnode_size
+  digitalocean_default_image  = "debian-13-x64"
   digitalocean_global_tags = [
     "Owner:Devops",
     "EthNetwork:${var.ethereum_network}"
   ]
 
-  # flatten vm_groups so that we can use it with for_each()
   digitalocean_vms = flatten([
     for group in local.digitalocean_vm_groups : [
       for vm_key, vm in group.vms : {
-        id        = "${group.id}"
-        group_key = "${group.group_name}"
+        id        = group.id
+        group_key = group.group_name
         vm_key    = vm_key
 
-        name         = try(vm.name, "${group.id}")
-        ssh_keys     = try(vm.ssh_keys, [data.digitalocean_ssh_key.main.fingerprint])
-        region       = try(vm.region, try(group.region, local.digitalocean_default_region))
-        image        = try(vm.image, local.digitalocean_default_image)
-        size         = try(vm.size, local.digitalocean_default_size)
-        resize_disk  = try(vm.resize_disk, true)
-        monitoring   = try(vm.monitoring, true)
-        backups      = try(vm.backups, false)
-        ipv6         = try(vm.ipv6, true)
-        ansible_vars = try(vm.ansible_vars, null)
-        vpc_uuid = try(vm.vpc_uuid, try(
-          digitalocean_vpc.main[vm.region].id,
-          digitalocean_vpc.main[try(group.region, local.digitalocean_default_region)].id
-        ))
+        name        = group.id
+        ssh_keys    = [data.digitalocean_ssh_key.main.fingerprint]
+        region      = vm.region
+        image       = local.digitalocean_default_image
+        size        = vm.supernode ? var.digitalocean_supernode_size : var.digitalocean_fullnode_size
+        resize_disk = true
+        monitoring  = true
+        backups     = false
+        ipv6        = vm.ipv6
+        vpc_uuid    = digitalocean_vpc.main[vm.region].id
 
-        tags = concat(local.digitalocean_global_tags, try(split(",", group.tags), []), try(split(",", vm.tags), []))
+        tags = concat(local.digitalocean_global_tags, [
+          "group_name:${group.group_name}",
+          "val_start:${vm.val_start}",
+          "val_end:${vm.val_end}",
+          "supernode:${vm.supernode ? "True" : "False"}",
+          "arch:${vm.arch}",
+          ], compact([
+            can(regex("bootnode", group.group_name)) ? "bootnode:${var.ethereum_network}" : null,
+            can(regex("mev-relay", group.group_name)) ? "mev-relay:${var.ethereum_network}" : null
+        ]))
       }
     ]
   ])
@@ -110,7 +136,7 @@ resource "digitalocean_vpc" "main" {
 
 resource "digitalocean_droplet" "main" {
   for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm
+    for vm in local.digitalocean_vms : vm.id => vm
   }
   name        = "${var.ethereum_network}-${each.value.name}"
   region      = each.value.region
@@ -129,196 +155,4 @@ resource "digitalocean_project_resources" "droplets" {
   for_each  = digitalocean_droplet.main
   project   = data.digitalocean_project.main.id
   resources = [each.value.urn]
-}
-
-resource "digitalocean_firewall" "main" {
-  name = "${var.ethereum_network}-nodes"
-  // Tags are used to select which droplets should
-  // be assigned to this firewall.
-  tags = [
-    "EthNetwork:${var.ethereum_network}"
-  ]
-
-  // SSH
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  // Nginx / Web
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "80"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "443"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  // Consensus layer p2p port
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "9000-9001"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  inbound_rule {
-    protocol         = "udp"
-    port_range       = "9000-9001"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  // Execution layer p2p Port
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "30303"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  inbound_rule {
-    protocol         = "udp"
-    port_range       = "30303"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "42069"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  inbound_rule {
-    protocol         = "udp"
-    port_range       = "42069"
-    source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  // Allow all outbound traffic
-  outbound_rule {
-    protocol              = "tcp"
-    port_range            = "1-65535"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  outbound_rule {
-    protocol              = "udp"
-    port_range            = "1-65535"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  outbound_rule {
-    protocol              = "icmp"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
-  }
-  depends_on = [digitalocean_project_resources.droplets]
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//                                   DNS NAMES
-////////////////////////////////////////////////////////////////////////////////////////
-
-data "cloudflare_zone" "default" {
-  name = "ethpandaops.io"
-}
-
-resource "cloudflare_record" "server_record_v4" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "${each.value.name}.${var.ethereum_network}"
-  type    = "A"
-  value   = digitalocean_droplet.main[each.value.id].ipv4_address
-  proxied = false
-  ttl     = 120
-}
-
-resource "cloudflare_record" "server_record_v6" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm if vm.ipv6
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "${each.value.name}.${var.ethereum_network}"
-  type    = "AAAA"
-  value   = digitalocean_droplet.main[each.value.id].ipv6_address
-  proxied = false
-  ttl     = 120
-}
-
-resource "cloudflare_record" "server_record_rpc_v4" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "rpc.${each.value.name}.${var.ethereum_network}"
-  type    = "A"
-  value   = digitalocean_droplet.main[each.value.id].ipv4_address
-  proxied = false
-  ttl     = 120
-}
-
-resource "cloudflare_record" "server_record_rpc_v6" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm if vm.ipv6
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "rpc.${each.value.name}.${var.ethereum_network}"
-  type    = "AAAA"
-  value   = digitalocean_droplet.main[each.value.id].ipv6_address
-  proxied = false
-  ttl     = 120
-}
-
-resource "cloudflare_record" "server_record_beacon_v4" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "bn.${each.value.name}.${var.ethereum_network}"
-  type    = "A"
-  value   = digitalocean_droplet.main[each.value.id].ipv4_address
-  proxied = false
-  ttl     = 120
-}
-
-resource "cloudflare_record" "server_record_beacon_v6" {
-  for_each = {
-    for vm in local.digitalocean_vms : "${vm.id}" => vm if vm.ipv6
-  }
-  zone_id = data.cloudflare_zone.default.id
-  name    = "bn.${each.value.name}.${var.ethereum_network}"
-  type    = "AAAA"
-  value   = digitalocean_droplet.main[each.value.id].ipv6_address
-  proxied = false
-  ttl     = 120
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////
-//                          GENERATED FILES AND OUTPUTS
-////////////////////////////////////////////////////////////////////////////////////////
-
-resource "local_file" "ansible_inventory" {
-  content = templatefile("ansible_inventory.tmpl",
-    {
-      ethereum_network_name = "${var.ethereum_network}"
-      groups = merge(
-        { for group in local.digitalocean_vm_groups : "${group.group_name}" => true... },
-      )
-      hosts = merge(
-        {
-          for key, server in digitalocean_droplet.main : "do.${key}" => {
-            ip              = "${server.ipv4_address}"
-            ipv6            = try(server.ipv6_address, "none")
-            group           = try(split(":", tolist(server.tags)[2])[1], "unknown")
-            validator_start = try(split(":", tolist(server.tags)[4])[1], 0)
-            validator_end   = try(split(":", tolist(server.tags)[3])[1], 0) # if the tag is not a number it will be 0 - e.g no validator keys
-            tags            = "${server.tags}"
-            hostname        = "${split(".", key)[0]}"
-            cloud           = "digitalocean"
-            region          = "${server.region}"
-          }
-        }
-      )
-    }
-  )
-  filename = "../../ansible/inventories/devnet-0/inventory.ini"
 }
