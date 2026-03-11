@@ -14,15 +14,20 @@ default_ethereum_client_images:
   ethereumjs: docker.ethquokkaops.io/dh/ethpandaops/ethereumjs:provable-web3-46b669f
   nethermind: docker.ethquokkaops.io/dh/nethermindeth/nethermind:master
   reth: docker.ethquokkaops.io/dh/ethpandaops/reth:main
+  nimbusel: docker.ethquokkaops.io/dh/ethpandaops/nimbus-eth1:master
+  ethrex: docker.ethquokkaops.io/gh/lambdaclass/ethrex:latest
 
 
 default_tooling_images:
   mev_boost: docker.ethquokkaops.io/dh/ethpandaops/mev-boost:latest
   mev_boost_relay: docker.ethquokkaops.io/dh/ethpandaops/mev-boost-relay:latest
+  mev_builder: docker.ethquokkaops.io/dh/ethpandaops/reth-rbuilder:develop
+  mev_relay: docker.ethquokkaops.io/dh/ethpandaops/mev-boost-relay:main
   xatu_sentry: docker.ethquokkaops.io/dh/ethpandaops/xatu:latest
   xatu_cannon: docker.ethquokkaops.io/dh/ethpandaops/xatu:latest
   xatu_mimicry: docker.ethquokkaops.io/dh/ethpandaops/xatu:latest
   xatu_cl_mimicry: docker.ethquokkaops.io/dh/ethpandaops/xatu:latest
+  xatu_relay_monitor: docker.ethquokkaops.io/dh/ethpandaops/xatu:latest
   ethereum_metrics_exporter: docker.ethquokkaops.io/dh/ethpandaops/ethereum-metrics-exporter:latest
   tx_fuzz: docker.ethquokkaops.io/dh/ethpandaops/tx-fuzz:latest
   forkmon: docker.ethquokkaops.io/dh/skylenet/nodemonitor:darkmode
@@ -54,5 +59,10 @@ default_tooling_images:
   nginx_proxy: docker.ethquokkaops.io/dh/nginx:alpine
   nginx_proxy_gen: docker.ethquokkaops.io/dh/nginxproxy/docker-gen
   nginx_proxy_acme: docker.ethquokkaops.io/dh/nginxproxy/acme-companion
+  nginx_proxy_cert_loader: docker.ethquokkaops.io/dh/ethpandaops/debian-docker:latest
+  nginx_proxy_cert_linker: docker.ethquokkaops.io/dh/nginxproxy/docker-gen
   vector: docker.ethquokkaops.io/dh/timberio/vector:0.46.1-alpine
   spamoor: docker.ethquokkaops.io/dh/ethpandaops/spamoor:latest
+  blobber: docker.ethquokkaops.io/dh/ethpandaops/blobber:latest
+  syncoor_web: docker.ethquokkaops.io/gh/ethpandaops/syncoor-web:master
+  syncoor_server: docker.ethquokkaops.io/gh/ethpandaops/syncoor:master
