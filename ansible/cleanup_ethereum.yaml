@@ -1,9 +1,10 @@
-- hosts: all, !localhost
+- name: Cleanup ethereum data
+  hosts: all, !localhost
   serial: "{{ batch_count | default('100%') }}"
   become: true
   tasks:
-    #- name:
-    #  ansible.builtin.pause:
+    # - name:
+    #   ansible.builtin.pause:
     #    prompt: |+
     #      =========================================================
     #                  !!!!!!!!!  WARNING  !!!!!!!!!
@@ -16,7 +17,7 @@
     #      Are you sure you want to continue? (yes/no)
     #  register: prompt
     - name: Cleanup all data
-      #when: prompt.user_input == "yes"
+      # when: prompt.user_input == "yes"
       block:
         - name: Remove eth containers
           community.docker.docker_container:
@@ -66,7 +67,7 @@
             - "mev-relay-redis"
             - "mev-relay-database"
         - name: Remove data dirs
-          file:
+          ansible.builtin.file:
             state: absent
             path: "{{ item }}"
           loop:
