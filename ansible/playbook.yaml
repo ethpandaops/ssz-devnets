@@ -32,25 +32,21 @@
     - role: ethpandaops.general.vector
       tags: [init-server, vector]
 
-- hosts: hive
+- hosts: dns_server
   become: true
   roles:
-    - role: gantsign.golang
-      golang_gopath: '/data/workspace-go'
-      golang_version: '1.21.13'
-      tags: [init-server, golang]
-    - role: ethpandaops.general.hive
-      tags: [hive]
-    - role: ethpandaops.general.docker_nginx_proxy
-      tags: [docker_nginx_proxy]
+    - role: ethpandaops.general.dns_server
+      tags: [init-server, dns_server]
+    - role: ethpandaops.general.wildcard_cert_issuer
+      tags: [init-server, wildcard_cert]
 
 - hosts: bootnode
   become: true
   roles:
-    - role: ethpandaops.general.cl_bootnode
-      tags: [cl_bootnode]
     - role: ethpandaops.general.ethereum_testnet_config
       tags: [ethereum, eth_testnet_config, ethereum_testnet_config]
+    - role: ethpandaops.general.bootnodoor
+      tags: [bootnodoor]
     - role: ethpandaops.general.validator_keys
       when: ethereum_node_cl_validator_enabled == true
       tags: [ethereum, validator_keys]
@@ -77,25 +73,40 @@
 
 - hosts: ethereum_node
   become: true
-  strategy: free
   roles:
     - role: ethpandaops.general.ethereum_node
       tags: [ethereum, ethereum_node]
-  post_tasks:
+    - role: ethpandaops.general.brakebear
+      tags: [brakebear]
+
+- hosts: bootnode
+  become: true
+  tasks:
     - name: Refresh inventory web
       ansible.builtin.import_role:
         name: ethpandaops.general.ethereum_inventory_web
       tags: [eth_inventory_web, ethereum_inventory_web]
-      delegate_to: bootnode-1
-      run_once: true
+      when: inventory_hostname == primary_bootnode
       vars:
-        eth_inventory_web_container_networks: "{{ docker_networks_shared }}" # noqa var-naming[no-role-prefix]
-        eth_inventory_web_container_env: # noqa var-naming[no-role-prefix]
-          VIRTUAL_HOST: "bootnode-1.{{ network_subdomain }}"
+        eth_inventory_web_container_networks: "{{ docker_networks_shared }}"  # noqa: var-naming[no-role-prefix]
+        eth_inventory_web_container_env:  # noqa: var-naming[no-role-prefix]
+          VIRTUAL_HOST: "{{ primary_bootnode }}.{{ network_server_subdomain }}"
           VIRTUAL_PORT: "80"
           VIRTUAL_PATH: "/meta/api"
           VIRTUAL_DEST: "/"
-          LETSENCRYPT_HOST: "bootnode-1.{{ network_subdomain }}"
+          LETSENCRYPT_HOST: "{{ primary_bootnode }}.{{ network_server_subdomain }}"
+
+- hosts: mev_relay
+  become: true
+  roles:
+    - role: ethpandaops.general.mev_relay
+      tags: [mev_relay]
+
+- hosts: tx_fuzz_txs
+  become: true
+  roles:
+    - role: ethpandaops.general.tx_fuzz
+      tags: [tx_fuzz, tx_fuzz_txs]
 
 - hosts: bootnode
   become: true
@@ -103,25 +114,9 @@
     - role: ethpandaops.general.ethereum_inventory_web
       tags: [eth_inventory_web, ethereum_inventory_web]
 
-- hosts: dora
-  become: true
-  roles:
-    - role: ethpandaops.general.dora
-      tags: [dora]
-
 - hosts: localhost
   roles:
     - role: ethpandaops.general.ethereum_post_network_setup
       tags: [eth_post_network_setup, ethereum_post_network_setup]
     - role: ethpandaops.general.generate_kubernetes_config
       tags: [gen_kubernetes_config, generate_kubernetes_config]
-
-- hosts: tx_fuzz_txs
-  become: true
-  roles:
-    - role: ethpandaops.general.tx_fuzz
-      tags: [tx_fuzz, tx_fuzz_txs]
-      vars:
-        tx_fuzz_container_name: "{{ tx_fuzz_txs_container_name }}"
-        tx_fuzz_container_command: "{{ tx_fuzz_txs_container_command }}"
-        tx_fuzz_container_image: "{{ tx_fuzz_txs_container_image }}"

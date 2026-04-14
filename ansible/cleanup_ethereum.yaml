@@ -1,9 +1,10 @@
-- hosts: all, !localhost
+- name: Cleanup ethereum data
+  hosts: all, !localhost
   serial: "{{ batch_count | default('100%') }}"
   become: true
   tasks:
-    #- name:
-    #  ansible.builtin.pause:
+    # - name:
+    #   ansible.builtin.pause:
     #    prompt: |+
     #      =========================================================
     #                  !!!!!!!!!  WARNING  !!!!!!!!!
@@ -16,13 +17,14 @@
     #      Are you sure you want to continue? (yes/no)
     #  register: prompt
     - name: Cleanup all data
-      #when: prompt.user_input == "yes"
+      # when: prompt.user_input == "yes"
       block:
         - name: Remove eth containers
           community.docker.docker_container:
             name: "{{ item }}"
             state: absent
             timeout: 5
+            force_kill: true
           loop:
             # Execution layer clients
             - "besu"
@@ -36,6 +38,7 @@
             - "execution"
             - "execution-init"
             - "nimbusel"
+            - "ethrex"
             # Consensus layer clients
             - "lighthouse-validator"
             - "lighthouse"
@@ -58,8 +61,13 @@
             - "mev-boost"
             - "external-block-builder"
             - "xatu-sentry"
+            - "mev-relay-api"
+            - "mev-relay-housekeeper"
+            - "mev-relay-website"
+            - "mev-relay-redis"
+            - "mev-relay-database"
         - name: Remove data dirs
-          file:
+          ansible.builtin.file:
             state: absent
             path: "{{ item }}"
           loop:
@@ -71,6 +79,7 @@
             - /data/nethermind
             - /data/reth
             - /data/nimbusel
+            - /data/ethrex
             # Consensus layer data
             - /data/lighthouse
             - /data/lighthouse-validator
@@ -89,3 +98,5 @@
             - /data/execution-auth.secret
             - /data/cl-bootnode
             - /data/xatu-sentry
+            # MEV
+            - /data/mev_relay
